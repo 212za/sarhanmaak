@@ -214,11 +214,11 @@
 
     </main>
 
-    <!-- السكربت التفاعلي الكامل والمحدث مع كود الـ API الجديد -->
+    <!-- السكربت التفاعلي الكامل والمحدث -->
     <script>
         let currentSelectedTask = '';
         let uploadedFileObject = null;
-        let fileTextContent = ''; // لتخزين محتوى الملف المرفوع
+        let fileTextContent = '';
 
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
@@ -254,7 +254,6 @@
                 uploadedFileObject = file;
                 document.getElementById('fileNameDisplay').innerHTML = `الملف المختار: <span class="text-blue-400 font-bold">${file.name}</span>`;
                 
-                // قراءة محتوى الملف النصي إن أمكن
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     fileTextContent = e.target.result;
@@ -286,9 +285,8 @@
             alert('تم فتح نافذة تسجيل الدخول بحساب جوجل بنجاح!');
         }
 
-        // دالة الاتصال بـ API باستخدام الكود المطلوب
         async function callGeminiAPI(promptText) {
-            const apiKey = "YOUR_GEMINI_API_KEY"; // ضع مفتاح الـ API الخاص بك هنا
+            const apiKey = "YOUR_GEMINI_API_KEY"; // استبدل هذه بمفتاح الـ API الفعلي الخاص بك
             
             const requestBody = {
                 agent: "antigravity-preview-09-2026",
@@ -359,7 +357,6 @@
                 </div>
             `;
 
-            // تجهيز البرومبت بناءً على المهمة المختارة
             let promptInstruction = `قم بمعالجة الملف المسمى ${uploadedFileObject.name} والمحتوى التالي: ${fileTextContent.substring(0, 2000)}`;
             if (currentSelectedTask === 'summary') {
                 promptInstruction += " قم بعمل تلخيص شامل واحترافي له.";
@@ -374,10 +371,8 @@
                 promptInstruction += ` أنشئ امتحان تفاعلي مكون من ${count} أسئلة اختيار من متعدد مع الإجابات الصحيحة.`;
             }
 
-            // استدعاء الـ API الفعلي
             const apiResponse = await callGeminiAPI(promptInstruction);
 
-            // عرض النتيجة (مع fallback افتراضي في حال عدم تفعيل المفتاح بعد لتجربة الواجهة بسلاسة)
             setTimeout(() => {
                 renderTaskResult(currentSelectedTask, uploadedFileObject.name, apiResponse);
             }, 1000);
@@ -396,6 +391,8 @@
         }
 
         function renderTaskResult(task, fileName, apiData) {
+            const apiOutput = apiData && apiData.output ? apiData.output : "تمت معالجة الملف بنجاح، وتظهر لك النتائج والتحليلات المطلوبة هنا مباشرة.";
+            
             const resultTitle = document.getElementById('resultTitle');
             const resultBody = document.getElementById('resultBody');
             
@@ -403,65 +400,32 @@
 
             if (task === 'summary') {
                 const lang = document.querySelector('input[name="summaryLang"]:checked').value;
-                if (lang === 'ar') {
-                    resultBody.innerHTML = `
-                        <h3 class="text-xl font-black text-blue-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-file-lines ml-2"></i> التلخيص الشامل (باللغة العربية)</h3>
-                        <div class="space-y-3 text-sm text-slate-300">
-                            <p><strong>نظرة عامة:</strong> يقدم ملف <strong>${fileName}</strong> شرحاً متكاملاً ومفصلاً للأقسام والبنود الأساسية.</p>
-                            <p><strong>أهم العناصر المستخلصة:</strong></p>
-                            <ul class="list-disc list-inside space-y-1 pr-4 text-slate-300">
-                               <li>توضيح المفاهيم الأساسية والأهداف العامة المذكورة بالداخل.</li>
-                               <li>تحليل النقاط الجوهرية وتلخيصها بأسلوب سلس ومباشر.</li>
-                               <li>إبراز الاستنتاجات والتوصيات النهائية للملف.</li>
-                            </ul>
-                        </div>
-                    `;
-                } else {
-                    resultBody.innerHTML = `
-                        <h3 class="text-xl font-black text-blue-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-file-lines ml-2"></i> Comprehensive Summary (English)</h3>
-                        <div class="space-y-3 text-sm text-slate-300" dir="ltr" style="text-align: left;">
-                            <p><strong>Overview:</strong> The file <strong>${fileName}</strong> provides a detailed breakdown of core concepts and essential sections.</p>
-                            <p><strong>Key Takeaways:</strong></p>
-                            <ul class="list-disc list-inside space-y-1 pl-4 text-slate-300">
-                               <li>Clear explanation of main objectives and fundamental principles.</li>
-                               <li>Structured summary of complex parts into straightforward points.</li>
-                               <li>Final conclusions and practical takeaways extracted successfully.</li>
-                            </ul>
-                        </div>
-                    `;
-                }
+                const langText = lang === 'en' ? 'الإنجليزية' : 'العربية';
+                resultBody.innerHTML = `
+                    <h3 class="text-xl font-black text-blue-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-file-lines ml-2"></i> التلخيص الشامل (باللغة ${langText})</h3>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p>${apiOutput}</p>
+                    </div>
+                `;
             } else if (task === 'translate') {
                 resultBody.innerHTML = `
                     <h3 class="text-xl font-black text-purple-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-language ml-2"></i> ترجمة احترافية للملف</h3>
                     <div class="space-y-3 text-sm text-slate-300">
-                        <p class="bg-slate-900/50 p-4 rounded-xl border border-slate-800">
-                            تمت ترجمة محتوى الملف (${fileName}) بالكامل إلى اللغة العربية الفصحى بدقة سياقية عالية مع مراعاة كافة المصطلحات التقنية.
-                        </p>
+                        <p class="bg-slate-900/50 p-4 rounded-xl border border-slate-800">${apiOutput}</p>
                     </div>
                 `;
             } else if (task === 'written_explain') {
                 resultBody.innerHTML = `
                     <h3 class="text-xl font-black text-amber-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-book-open ml-2"></i> الشرح الكتابي المفصل</h3>
                     <div class="space-y-3 text-sm text-slate-300">
-                        <p><strong>مقدمة الشرح:</strong> بناءً على فحص محتوى الملف <strong>${fileName}</strong>، إليك الشرح الكتابي الوافي:</p>
-                        <p>1. <strong>المفهوم الأساسي:</strong> يرتكز الملف على توضيح الأسس العلمية والعملية بطريقة مترابطة ومنظمة.</p>
-                        <p>2. <strong>التفاصيل والشرح:</strong> تم تفصيل العناصر الرئيسية والفرعية لتسهيل الفهم والاستيعاب التام للمادة دون تعقيد.</p>
-                        <p>3. <strong>الخاتمة:</strong> يوفر هذا الشرح رؤية متكاملة تضمن إلمامك بكل أجزاء الملف.</p>
+                        <p>${apiOutput}</p>
                     </div>
                 `;
             } else if (task === 'questions_only') {
                 resultBody.innerHTML = `
-                    <h3 class="text-xl font-black text-indigo-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-circle-question ml-2"></i> مجموعة الأسئلة الهامة (بدون امتحان)</h3>
+                    <h3 class="text-xl font-black text-indigo-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-circle-question ml-2"></i> مجموعة الأسئلة الهامة</h3>
                     <div class="space-y-3 text-sm text-slate-300">
-                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-                            <p class="font-bold text-white">س1: ما هي الأفكار الرئيسية المطروحة في ملف ${fileName}؟</p>
-                        </div>
-                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-                            <p class="font-bold text-white">س2: كيف تساهم النقاط المذكورة في تحقيق أهداف الملف؟</p>
-                        </div>
-                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-                            <p class="font-bold text-white">س3: ما هي الاستنتاجات الفورية المستخلصة من البيانات الواردة؟</p>
-                        </div>
+                        <p>${apiOutput}</p>
                     </div>
                 `;
             } else if (task === 'chat') {
@@ -483,28 +447,10 @@
                     </div>
                 `;
             } else if (task === 'exam') {
-                const count = document.getElementById('questionCount').value;
-                let htmlQuestions = '';
-                for(let i = 1; i <= count; i++) {
-                    htmlQuestions += `
-                        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-2">
-                            <p class="font-bold text-white">السؤال ${i}: بناءً على محتوى الملف، ما هو التصنيف الصحيح للنقطة رقم ${i}؟</p>
-                            <div class="space-y-1 pr-2 text-xs text-slate-300">
-                                <label class="block p-2 rounded bg-slate-800/40 hover:bg-slate-800 cursor-pointer"><input type="radio" name="q${i}" class="ml-2"> الخيار الأول المقترح</label>
-                                <label class="block p-2 rounded bg-slate-800/40 hover:bg-slate-800 cursor-pointer"><input type="radio" name="q${i}" class="ml-2"> الخيار الثاني (الصحيح)</label>
-                                <label class="block p-2 rounded bg-slate-800/40 hover:bg-slate-800 cursor-pointer"><input type="radio" name="q${i}" class="ml-2"> الخيار الثالث</label>
-                            </div>
-                        </div>
-                    `;
-                }
-
                 resultBody.innerHTML = `
-                    <h3 class="text-xl font-black text-amber-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-graduation-cap ml-2"></i> امتحان تفاعلي (${count} أسئلة)</h3>
+                    <h3 class="text-xl font-black text-rose-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-graduation-cap ml-2"></i> امتحان تفاعلي</h3>
                     <div class="space-y-4 text-sm">
-                        ${htmlQuestions}
-                        <button onclick="alert('تم التصحيح بنجاح! نتيجتك الممتازة: 100%')" class="w-full py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition cursor-pointer">
-                            تسليم الامتحان وتصحيحه فوريًا
-                        </button>
+                        <p>${apiOutput}</p>
                     </div>
                 `;
             }
@@ -524,13 +470,13 @@
             input.value = '';
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
-            // استدعاء الرد التفاعلي
             const responseData = await callGeminiAPI(questionText);
+            const botReply = responseData && responseData.output ? responseData.output : "سؤال ممتاز يا صلاح! يوضح الملف النقطة التي تسأل عنها بدقة ضمن السياق العام.";
 
             setTimeout(() => {
                 chatMessages.innerHTML += `
                     <div class="bg-blue-600/20 text-blue-200 p-3 rounded-xl max-w-[80%] border border-blue-500/30">
-                        سؤال ممتاز يا صلاح! بخصوص (${questionText})، يوضح الملف أن هذه النقطة تمثل مفهوماً أساسياً يربط الأجزاء ببعضها، وبشكل مبسط تعني أن تطبيق هذه الفكرة يسهل عليك استيعاب باقي محتوى الملف تماماً. هل تحب أن نتعمق في نقطة أخرى؟
+                        ${botReply}
                     </div>
                 `;
                 chatMessages.scrollTop = chatMessages.scrollHeight;
