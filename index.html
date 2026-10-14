@@ -282,7 +282,7 @@
       resultBody.innerHTML = `
         <div class="flex flex-col items-center justify-center py-12 space-y-4">
           <i class="fa-solid fa-spinner fa-spin text-4xl text-blue-400"></i>
-          <p class="text-slate-400 text-sm">جاري قراءة محتوى الملف وتطبيق مهمة (${getTaskName(currentSelectedTask)})...</p>
+          <p class="text-slate-400 text-sm">جاري قراءة محتوى الملف وت تطبيق مهمة (${getTaskName(currentSelectedTask)})...</p>
         </div>
       `;
       let promptInstruction = `قم بمعالجة الملف المسمى ${uploadedFileObject.name} والمحتوى التالي: ${fileTextContent.substring(0, 2000)}`;
@@ -317,7 +317,12 @@
     }
 
     function renderTaskResult(task, fileName, apiData) {
-      const apiOutput = apiData && apiData.output ? apiData.output : "تمت معالجة الملف بنجاح، وتظهر لك النتائج والتحليلات المطلوبة هنا مباشرة.";
+      let apiOutput = "حدث خطأ أثناء تحميل النتيجة من الخادم.";
+      
+      if (apiData && apiData.candidates && apiData.candidates[0] && apiData.candidates[0].content && apiData.candidates[0].content.parts && apiData.candidates[0].content.parts[0].text) {
+        apiOutput = apiData.candidates[0].content.parts[0].text;
+      }
+      
       const resultTitle = document.getElementById('resultTitle');
       const resultBody = document.getElementById('resultBody');
       resultTitle.innerText = `نتيجة: ${getTaskName(task)} (${fileName})`;
@@ -325,37 +330,37 @@
         const lang = document.querySelector('input[name="summaryLang"]:checked').value;
         const langText = lang === 'en' ? 'الإنجليزية' : 'العربية';
         resultBody.innerHTML = `
-          <h3 class="text-xl font-black text-blue-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-file-lines ml-2"></i> التلخيص الشامل (باللغة ${langText})</h3>
+          <h3 class="text-xl font-black text-blue-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-file-lines ml-2"></i> التلخيص الشامل (باللغة ${langText})</h3>
           <div class="space-y-3 text-sm text-slate-300">
             <p>${apiOutput}</p>
           </div>
         `;
       } else if (task === 'translate') {
         resultBody.innerHTML = `
-          <h3 class="text-xl font-black text-purple-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-language ml-2"></i> ترجمة احترافية للملف</h3>
+          <h3 class="text-xl font-black text-purple-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-language ml-2"></i> ترجمة احترافية للملف</h3>
           <div class="space-y-3 text-sm text-slate-300">
-            <p class="bg-slate-900/50 p-4 rounded-xl border border-slate-800">${apiOutput}</p>
+            <p class="bg-slate-900/50 p-4 rounded-xl border border-cardBorder">${apiOutput}</p>
           </div>
         `;
       } else if (task === 'written_explain') {
         resultBody.innerHTML = `
-          <h3 class="text-xl font-black text-amber-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-book-open ml-2"></i> الشرح الكتابي المفصل</h3>
+          <h3 class="text-xl font-black text-amber-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-book-open ml-2"></i> الشرح الكتابي المفصل</h3>
           <div class="space-y-3 text-sm text-slate-300">
             <p>${apiOutput}</p>
           </div>
         `;
       } else if (task === 'questions_only') {
         resultBody.innerHTML = `
-          <h3 class="text-xl font-black text-indigo-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-circle-question ml-2"></i> مجموعة الأسئلة الهامة</h3>
+          <h3 class="text-xl font-black text-indigo-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-circle-question ml-2"></i> مجموعة الأسئلة الهامة</h3>
           <div class="space-y-3 text-sm text-slate-300">
             <p>${apiOutput}</p>
           </div>
         `;
       } else if (task === 'chat') {
         resultBody.innerHTML = `
-          <h3 class="text-xl font-black text-emerald-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-comments ml-2"></i> محادثة الشرح والتفاعل الشفوي</h3>
+          <h3 class="text-xl font-black text-emerald-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-comments ml-2"></i> محادثة الشرح والتفاعل الشفوي</h3>
           <p class="text-xs text-slate-400">اطرح أي سؤال حول محتوى الملف وسيقوم النظام بشرحه لك وتوضيحه بالتفصيل:</p>
-          <div id="chatMessages" class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 h-64 overflow-y-auto space-y-3 text-sm">
+          <div id="chatMessages" class="bg-slate-900/60 p-4 rounded-2xl border border-cardBorder h-64 overflow-y-auto space-y-3 text-sm">
             <div class="bg-blue-600/20 text-blue-200 p-3 rounded-xl max-w-[80%] border border-blue-500/30">
               أهلاً بك يا صلاح! أنا جاهز لمناقشة محتوى ملف <strong>${fileName}</strong> معك. ما هي النقطة أو الجزء الذي تريد أن نشرحه بالتفصيل؟
             </div>
@@ -369,7 +374,7 @@
         `;
       } else if (task === 'exam') {
         resultBody.innerHTML = `
-          <h3 class="text-xl font-black text-rose-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-graduation-cap ml-2"></i> امتحان تفاعلي</h3>
+          <h3 class="text-xl font-black text-rose-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-graduation-cap ml-2"></i> امتحان تفاعلي</h3>
           <div class="space-y-4 text-sm">
             <p>${apiOutput}</p>
           </div>
@@ -392,7 +397,10 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
 
       const responseData = await callGeminiAPI(questionText);
-      const botReply = responseData && responseData.output ? responseData.output : "سؤال ممتاز يا صلاح! يوضح الملف النقطة التي تسأل عنها بدقة ضمن السياق العام.";
+      let botReply = "تعذر الحصول على رد من الذكاء الاصطناعي.";
+      if (responseData && responseData.candidates && responseData.candidates[0] && responseData.candidates[0].content && responseData.candidates[0].content.parts && responseData.candidates[0].content.parts[0].text) {
+        botReply = responseData.candidates[0].content.parts[0].text;
+      }
       
       setTimeout(() => {
         chatMessages.innerHTML += `
