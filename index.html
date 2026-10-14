@@ -132,6 +132,20 @@
                             <span class="text-sm font-semibold text-slate-200">ترجمة الملف</span>
                         </button>
 
+                        <button type="button" onclick="selectTask('written_explain')" class="task-btn p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-right transition-all duration-200 flex items-center space-x-3 space-x-reverse group cursor-pointer" data-task="written_explain">
+                            <span class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-book-open"></i>
+                            </span>
+                            <span class="text-sm font-semibold text-slate-200">شرح كتابي</span>
+                        </button>
+
+                        <button type="button" onclick="selectTask('questions_only')" class="task-btn p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-right transition-all duration-200 flex items-center space-x-3 space-x-reverse group cursor-pointer" data-task="questions_only">
+                            <span class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </span>
+                            <span class="text-sm font-semibold text-slate-200">أسئلة فقط بدون امتحان</span>
+                        </button>
+
                         <button type="button" onclick="selectTask('chat')" class="task-btn p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-right transition-all duration-200 flex items-center space-x-3 space-x-reverse group cursor-pointer" data-task="chat">
                             <span class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
                                 <i class="fa-solid fa-comments"></i>
@@ -139,8 +153,8 @@
                             <span class="text-sm font-semibold text-slate-200">محادثة وشرح تفاعلي (اسألني)</span>
                         </button>
 
-                        <button type="button" onclick="selectTask('exam')" class="task-btn p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-right transition-all duration-200 flex items-center space-x-3 space-x-reverse group sm:col-span-2 cursor-pointer" data-task="exam">
-                            <span class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                        <button type="button" onclick="selectTask('exam')" class="task-btn p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-right transition-all duration-200 flex items-center space-x-3 space-x-reverse group sm:col-span-2 md:col-span-1 cursor-pointer" data-task="exam">
+                            <span class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center group-hover:bg-rose-500 group-hover:text-white transition-colors">
                                 <i class="fa-solid fa-graduation-cap"></i>
                             </span>
                             <span class="text-sm font-semibold text-slate-200">امتحان تفاعلي (اختيار عدد الأسئلة)</span>
@@ -298,6 +312,8 @@
             switch(task) {
                 case 'summary': return 'التلخيص الشامل للملف';
                 case 'translate': return 'ترجمة الملف';
+                case 'written_explain': return 'الشرح الكتابي للملف';
+                case 'questions_only': return 'أسئلة فقط بدون امتحان';
                 case 'chat': return 'محادثة وشرح تفاعلي';
                 case 'exam': return 'امتحان تفاعلي';
                 default: return 'معالجة';
@@ -348,6 +364,31 @@
                         </p>
                     </div>
                 `;
+            } else if (task === 'written_explain') {
+                resultBody.innerHTML = `
+                    <h3 class="text-xl font-black text-amber-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-book-open ml-2"></i> الشرح الكتابي المفصل</h3>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p><strong>مقدمة الشرح:</strong> بناءً على فحص محتوى الملف <strong>${fileName}</strong>، إليك الشرح الكتابي الوافي:</p>
+                        <p>1. <strong>المفهوم الأساسي:</strong> يرتكز الملف على توضيح الأسس العلمية والعملية بطريقة مترابطة ومنظمة.</p>
+                        <p>2. <strong>التفاصيل والشرح:</strong> تم تفصيل العناصر الرئيسية والفرعية لتسهيل الفهم والاستيعاب التام للمادة دون تعقيد.</p>
+                        <p>3. <strong>الخاتمة:</strong> يوفر هذا الشرح رؤية متكاملة تضمن إلمامك بكل أجزاء الملف.</p>
+                    </div>
+                `;
+            } else if (task === 'questions_only') {
+                resultBody.innerHTML = `
+                    <h3 class="text-xl font-black text-indigo-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-circle-question ml-2"></i> مجموعة الأسئلة الهامة (بدون امتحان)</h3>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                            <p class="font-bold text-white">س1: ما هي الأفكار الرئيسية المطروحة في ملف ${fileName}؟</p>
+                        </div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                            <p class="font-bold text-white">س2: كيف تساهم النقاط المذكورة في تحقيق أهداف الملف؟</p>
+                        </div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                            <p class="font-bold text-white">س3: ما هي الاستنتاجات الفورية المستخلصة من البيانات الواردة؟</p>
+                        </div>
+                    </div>
+                `;
             } else if (task === 'chat') {
                 resultBody.innerHTML = `
                     <h3 class="text-xl font-black text-emerald-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-comments ml-2"></i> محادثة الشرح والتفاعل الشفوي</h3>
@@ -360,7 +401,7 @@
                     </div>
 
                     <div class="flex space-x-2 space-x-reverse pt-2">
-                        <input type="text5" id="userQuestionInput" placeholder="اكتب سؤالك هنا (مثال: اشرح لي الجزء الأول...)" class="flex-grow bg-slate-900 border border-slate-700 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-blue-500 text-white" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                        <input type="text" id="userQuestionInput" placeholder="اكتب سؤالك هنا (مثال: اشرح لي الجزء الأول...)" class="flex-grow bg-slate-900 border border-slate-700 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-blue-500 text-white" onkeypress="if(event.key === 'Enter') sendChatMessage()">
                         <button onclick="sendChatMessage()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-3 rounded-xl text-white font-bold transition cursor-pointer">
                             <i class="fa-solid fa-paper-plane"></i> ارسال
                         </button>
@@ -400,7 +441,6 @@
             const questionText = input.value.trim();
             if (!questionText) return;
 
-            // رسالة المستخدم
             chatMessages.innerHTML += `
                 <div class="bg-slate-800 text-slate-100 p-3 rounded-xl max-w-[80%] mr-auto border border-slate-700">
                     ${questionText}
@@ -409,7 +449,6 @@
             input.value = '';
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
-            // رد المساعد الذكي
             setTimeout(() => {
                 chatMessages.innerHTML += `
                     <div class="bg-blue-600/20 text-blue-200 p-3 rounded-xl max-w-[80%] border border-blue-500/30">
