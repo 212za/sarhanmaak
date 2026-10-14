@@ -291,7 +291,7 @@
 
     async function callGeminiAPI(promptText) {
       try {
-        const response = await fetch('/.netlify/functions/api', {
+        const response = await fetch('/api', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
