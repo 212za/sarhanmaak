@@ -7,6 +7,52 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  
+  <!-- استيراد مكتبات Firebase عبر CDN -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBMpZ7CXOJbgKpMqOjzsbbCcpHBlslU3mw",
+      authDomain: "salah-52496.firebaseapp.com",
+      databaseURL: "https://salah-52496-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "salah-52496",
+      storageBucket: "salah-52496.appspot.com",
+      messagingSenderId: "235427387836",
+      appId: "1:235427387836:web:26da71074fb1b9c403f3b9",
+      measurementId: "G-LTGB3X7DLQ"
+    };
+
+    // تهيئة Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // ربط الدالة بالنافذة العامة ليمكن استدعاؤها من الأزرار
+    window.loginWithGoogle = async function() {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log("تم تسجيل الدخول بنجاح:", user.displayName);
+        alert(`أهلاً بك يا ${user.displayName}! تم تسجيل الدخول بنجاح.`);
+      } catch (error) {
+        console.error("خطأ في تسجيل الدخول:", error);
+        alert("حدث خطأ أثناء تسجيل الدخول، حاول مرة أخرى.");
+      }
+    };
+
+    // متابعة حالة المستخدم (هل هو مسجل دخول أم لا)
+    onAuthStateChanged(auth, (user) => {
+      const loginBtn = document.getElementById('loginBtnText');
+      if (user) {
+        if (loginBtn) loginBtn.innerText = user.displayName.split(' ')[0]; // إظهار الاسم الأول
+      } else {
+        if (loginBtn) loginBtn.innerText = "تسجيل الدخول بجوجل";
+      }
+    });
+  </script>
+
   <script>
     tailwind.config = {
       theme: {
@@ -66,7 +112,7 @@
     </div>
     <button onclick="loginWithGoogle()" class="flex items-center space-x-2 space-x-reverse bg-slate-800/80 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl border border-slate-700 transition-all duration-300 shadow-sm cursor-pointer">
       <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
-      <span class="text-sm font-semibold">تسجيل الدخول بجوجل</span>
+      <span id="loginBtnText" class="text-sm font-semibold">تسجيل الدخول بجوجل</span>
     </button>
   </header>
 
@@ -243,10 +289,6 @@
       document.getElementById('examSettings').classList.toggle('hidden', taskType !== 'exam');
     }
 
-    function loginWithGoogle() {
-      alert('تم فتح نافذة تسجيل الدخول بحساب جوجل بنجاح!');
-    }
-
     async function callGeminiAPI(promptText) {
       try {
         const response = await fetch('/.netlify/functions/api', {
@@ -282,7 +324,7 @@
       resultBody.innerHTML = `
         <div class="flex flex-col items-center justify-center py-12 space-y-4">
           <i class="fa-solid fa-spinner fa-spin text-4xl text-blue-400"></i>
-          <p class="text-slate-400 text-sm">جاري قراءة محتوى الملف وت تطبيق مهمة (${getTaskName(currentSelectedTask)})...</p>
+          <p class="text-slate-400 text-sm">جاري قراءة محتوى الملف وتطبيق مهمة (${getTaskName(currentSelectedTask)})...</p>
         </div>
       `;
       let promptInstruction = `قم بمعالجة الملف المسمى ${uploadedFileObject.name} والمحتوى التالي: ${fileTextContent.substring(0, 2000)}`;
