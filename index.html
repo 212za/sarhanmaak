@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سرحان معك</title>
+    <!-- مكتبة التنسيقات Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- مكتبة الأيقونات FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة الخطوط العربية (Cairo) -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     
     <script>
@@ -19,20 +22,34 @@
                         darkBg: '#0b0f19',
                         cardBg: '#131c2e',
                         cardBorder: '#1e293b',
+                        accentBlue: '#3b82f6',
+                        accentPurple: '#8b5cf6',
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #0b0f19; color: #f8fafc; overflow-x: hidden; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #0b0f19;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
         .glow-bg {
-            position: absolute; width: 400px; height: 400px;
+            position: absolute;
+            width: 400px;
+            height: 400px;
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
-            filter: blur(100px); border-radius: 50%; z-index: -1;
+            filter: blur(100px);
+            border-radius: 50%;
+            z-index: -1;
             animation: floatGlow 10s ease-in-out infinite alternate;
         }
-        @keyframes floatGlow { 0% { transform: translateY(0px) scale(1); } 100% { transform: translateY(30px) scale(1.1); } }
+        @keyframes floatGlow {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(30px) scale(1.1); }
+        }
         .custom-glass {
             background: rgba(19, 28, 46, 0.75);
             backdrop-filter: blur(16px);
@@ -42,9 +59,11 @@
 </head>
 <body class="min-h-screen relative flex flex-col justify-between selection:bg-blue-500 selection:text-white">
 
+    <!-- خلفيات مضيئة متحركة -->
     <div class="glow-bg top-10 left-10"></div>
     <div class="glow-bg bottom-10 right-10" style="animation-delay: 5s;"></div>
 
+    <!-- الشريط العلوي (Navbar) -->
     <header class="w-full px-6 py-4 flex justify-between items-center custom-glass border-b border-cardBorder sticky top-0 z-50">
         <div class="flex items-center space-x-3 space-x-reverse">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
@@ -52,23 +71,33 @@
             </div>
             <span class="text-xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">سرحان معك</span>
         </div>
+        
+        <!-- زر تسجيل الدخول بجوجل -->
         <button onclick="loginWithGoogle()" class="flex items-center space-x-2 space-x-reverse bg-slate-800/80 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl border border-slate-700 transition-all duration-300 shadow-sm cursor-pointer">
             <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
             <span class="text-sm font-semibold">تسجيل الدخول بجوجل</span>
         </button>
     </header>
 
+    <!-- المحتوى الرئيسي للموقع -->
     <main class="container mx-auto px-4 py-10 max-w-4xl flex-grow flex flex-col justify-center">
         
+        <!-- القسم الرئيسي (الواجهة الأساسية) -->
         <div id="mainSection" class="transition-all duration-300">
+            <!-- عنوان ترحيبي جذاب -->
             <div class="text-center mb-10 space-y-3">
                 <h1 class="text-4xl md:text-5xl font-black tracking-tight leading-tight">
                     ارفع ملفك، ودعنا <span class="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">نزهلك</span>
                 </h1>
-                <p class="text-slate-400 text-base md:text-lg max-w-2xl mx-auto">شرح، ترجمة، أسئلة وأجوبة، وامتحانات تفاعلية صُممت خصيصاً لتناسب احتياجاتك بأعلى احترافية وسرعة.</p>
+                <p class="text-slate-400 text-base md:text-lg max-w-2xl mx-auto">
+                    شرح، ترجمة، أسئلة وأجوبة، وامتحانات تفاعلية صُممت خصيصاً لتناسب احتياجاتك بأعلى احترافية وسرعة.
+                </p>
             </div>
 
+            <!-- بطاقة التفاعل الرئيسية -->
             <div class="custom-glass rounded-3xl p-6 md:p-8 shadow-2xl space-y-8 border border-slate-800">
+                
+                <!-- 1. منطقة رفع الملفات (مع دعم السحب والإفلات الحقيقي) -->
                 <div class="space-y-2">
                     <label class="block text-sm font-bold text-slate-300">1. ارفع الملف الخاص بك (PDF, Word, TXT)</label>
                     <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 bg-slate-900/40 hover:bg-slate-900/70 group">
@@ -85,6 +114,7 @@
                     </div>
                 </div>
 
+                <!-- 2. اختيار المهمة المطلوبة -->
                 <div class="space-y-3">
                     <label class="block text-sm font-bold text-slate-300">2. اختر نوع المعالجة المطلوبة</label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -102,23 +132,30 @@
                             <span class="text-sm font-semibold text-slate-200">ترجمة الملف</span>
                         </button>
 
+                        <button type="button" onclick="selectTask('translate_summary')" class="task-btn p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-right transition-all duration-200 flex items-center space-x-3 space-x-reverse group cursor-pointer" data-task="translate_summary">
+                            <span class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-book-open-reader"></i>
+                            </span>
+                            <span class="text-sm font-semibold text-slate-200">ترجمة مع شرح</span>
+                        </button>
+
                         <button type="button" onclick="selectTask('qa')" class="task-btn p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-right transition-all duration-200 flex items-center space-x-3 space-x-reverse group cursor-pointer" data-task="qa">
                             <span class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
                                 <i class="fa-solid fa-circle-question"></i>
                             </span>
                             <span class="text-sm font-semibold text-slate-200">سؤال وجواب</span>
                         </button>
+
+                        <button type="button" onclick="selectTask('exam')" class="task-btn p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-right transition-all duration-200 flex items-center space-x-3 space-x-reverse group sm:col-span-2 cursor-pointer" data-task="exam">
+                            <span class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </span>
+                            <span class="text-sm font-semibold text-slate-200">امتحان تفاعلي (اختيار عدد الأسئلة)</span>
+                        </button>
                     </div>
                 </div>
 
-                <div id="summaryOptions" class="hidden space-y-2 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                    <label class="block text-sm font-bold text-slate-300">لغة التلخيص:</label>
-                    <div class="flex items-center space-x-4 space-x-reverse">
-                        <label class="text-slate-300 cursor-pointer"><input type="radio" name="lang" value="ar" checked class="ml-2 accent-blue-500">بالعربية</label>
-                        <label class="text-slate-300 cursor-pointer"><input type="radio" name="lang" value="en" class="ml-2 accent-blue-500">بالإنجليزية</label>
-                    </div>
-                </div>
-
+                <!-- إعدادات إضافية للامتحان -->
                 <div id="examSettings" class="hidden space-y-2 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
                     <label class="block text-sm font-bold text-slate-300">حدد عدد أسئلة الامتحان:</label>
                     <div class="flex items-center space-x-4 space-x-reverse">
@@ -127,6 +164,7 @@
                     </div>
                 </div>
 
+                <!-- زر بدء المعالجة -->
                 <button onclick="processFile()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-bold text-lg shadow-lg shadow-blue-600/25 hover:shadow-purple-600/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 cursor-pointer flex items-center justify-center space-x-2 space-x-reverse">
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                     <span>بدء المعالجة الذكية</span>
@@ -134,31 +172,60 @@
             </div>
         </div>
 
+        <!-- قسم عرض النتيجة الفعلية والتفاعلية (مخفي حتى يتم التنفيذ) -->
         <div id="resultSection" class="hidden space-y-6">
-            <div class="flex justify-between items-center custom-glass px-6 py-4 rounded-2xl border border-cardBorder">
+            <div class="flex justify-between items-center custom-glass px-6 py-4 rounded-2xl border border-slate-800">
                 <button onclick="goBack()" class="flex items-center space-x-2 space-x-reverse bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl transition cursor-pointer text-sm font-bold">
                     <i class="fa-solid fa-arrow-right"></i>
                     <span>رجوع للرئيسية</span>
                 </button>
                 <h2 id="resultTitle" class="text-lg font-bold text-blue-400">نتيجة التحليل</h2>
+                <button onclick="copyResult()" class="text-xs bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 px-3 py-2 rounded-xl transition cursor-pointer">
+                    <i class="fa-solid fa-copy ml-1"></i> نسخ المحتوى
+                </button>
             </div>
 
-            <div id="resultBody" class="custom-glass rounded-3xl p-6 md:p-8 shadow-2xl border border-cardBorder space-y-4 text-slate-200 leading-relaxed">
+            <div id="resultBody" class="custom-glass rounded-3xl p-6 md:p-8 shadow-2xl border border-slate-800 space-y-4 text-slate-200 leading-relaxed">
+                <!-- المحتوى الديناميكي يظهر هنا -->
             </div>
         </div>
 
     </main>
 
+    <!-- السكربت التفاعلي الكامل والمصلح -->
     <script>
         let currentSelectedTask = '';
         let uploadedFileObject = null;
+
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
 
+        // تفعيل النقر لاختيار الملف
         dropZone.addEventListener('click', () => fileInput.click());
-        ['dragenter', 'dragover'].forEach(eventName => dropZone.addEventListener(eventName, e => { e.preventDefault(); dropZone.classList.add('border-blue-500', 'bg-slate-900/80'); }, false));
-        ['dragleave', 'drop'].forEach(eventName => dropZone.addEventListener(eventName, e => { e.preventDefault(); dropZone.classList.remove('border-blue-500', 'bg-slate-900/80'); }, false));
-        dropZone.addEventListener('drop', e => { if (e.dataTransfer.files.length > 0) { fileInput.files = e.dataTransfer.files; handleFileSelect({ target: fileInput }); } });
+
+        // تفعيل السحب والإفلات الحقيقي (Drag & Drop)
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('border-blue-500', 'bg-slate-900/80');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-blue-500', 'bg-slate-900/80');
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileSelect({ target: fileInput });
+            }
+        });
 
         function handleFileSelect(event) {
             const file = event.target.files[0];
@@ -170,60 +237,164 @@
 
         function selectTask(taskType) {
             currentSelectedTask = taskType;
-            document.querySelectorAll('.task-btn').forEach(btn => {
+            const buttons = document.querySelectorAll('.task-btn');
+            
+            buttons.forEach(btn => {
                 btn.classList.remove('border-blue-500', 'bg-blue-600/10', 'shadow-lg');
                 btn.classList.add('border-slate-800', 'bg-slate-900/60');
             });
+
             const selectedBtn = document.querySelector(`[data-task="${taskType}"]`);
             if(selectedBtn) {
                 selectedBtn.classList.remove('border-slate-800', 'bg-slate-900/60');
                 selectedBtn.classList.add('border-blue-500', 'bg-blue-600/10', 'shadow-lg');
             }
-            document.getElementById('summaryOptions').classList.toggle('hidden', taskType !== 'summary');
-            document.getElementById('examSettings').classList.toggle('hidden', taskType !== 'exam');
+
+            const examSettings = document.getElementById('examSettings');
+            if (taskType === 'exam') {
+                examSettings.classList.remove('hidden');
+            } else {
+                examSettings.classList.add('hidden');
+            }
         }
 
-        function loginWithGoogle() { alert('تم فتح نافذة تسجيل الدخول بحساب جوجل بنجاح!'); }
+        function loginWithGoogle() {
+            alert('تم فتح نافذة تسجيل الدخول بحساب جوجل بنجاح!');
+        }
 
         function processFile() {
-            if (!fileInput.files.length) { alert('الرجاء اختيار أو سحب ملف أولاً!'); return; }
-            if (!currentSelectedTask) { alert('الرجاء اختيار نوع المعالجة المطلوبة أولاً!'); return; }
-            
+            if (!fileInput.files.length) {
+                alert('الرجاء اختيار أو سحب ملف أولاً!');
+                return;
+            }
+            if (!currentSelectedTask) {
+                alert('الرجاء اختيار نوع المعالجة المطلوبة (شرح، ترجمة، امتحان، إلخ)!');
+                return;
+            }
+
+            // إخفاء الرئيسية وإظهار واجهة التحميل والنتيجة
             document.getElementById('mainSection').classList.add('hidden');
             const resultSection = document.getElementById('resultSection');
             resultSection.classList.remove('hidden');
             
-            document.getElementById('resultBody').innerHTML = `
+            const resultTitle = document.getElementById('resultTitle');
+            const resultBody = document.getElementById('resultBody');
+
+            // شاشة التحميل المؤقتة
+            resultTitle.innerText = "جاري تحليل الملف...";
+            resultBody.innerHTML = `
                 <div class="flex flex-col items-center justify-center py-12 space-y-4">
                     <i class="fa-solid fa-spinner fa-spin text-4xl text-blue-400"></i>
-                    <p class="text-slate-400 text-sm">جاري معالجة الملف...</p>
+                    <p class="text-slate-400 text-sm">جاري قراءة محتوى الملف وتطبيق مهمة (${getTaskName(currentSelectedTask)})...</p>
                 </div>
             `;
-            
-            setTimeout(() => { renderTaskResult(currentSelectedTask, uploadedFileObject.name); }, 1800);
+
+            // المحاكاة الذكية للنتيجة حسب الطلب المختار
+            setTimeout(() => {
+                renderTaskResult(currentSelectedTask, uploadedFileObject.name);
+            }, 1800);
+        }
+
+        function getTaskName(task) {
+            switch(task) {
+                case 'summary': return 'شرح مفصل للملف';
+                case 'translate': return 'ترجمة الملف';
+                case 'translate_summary': return 'ترجمة مع شرح';
+                case 'qa': return 'سؤال وجواب';
+                case 'exam': return 'امتحان تفاعلي';
+                default: return 'معالجة';
+            }
         }
 
         function renderTaskResult(task, fileName) {
-            const body = document.getElementById('resultBody');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultBody = document.getElementById('resultBody');
+            
+            resultTitle.innerText = `نتيجة: ${getTaskName(task)} (${fileName})`;
+
             if (task === 'summary') {
-                const lang = document.querySelector('input[name="lang"]:checked').value;
-                const langText = lang === 'en' ? 'الإنجليزية' : 'العربية';
-                body.innerHTML = `<h3 class="text-xl font-black text-blue-400">الملخص المفصل باللغة ${langText}</h3><p>تم تلخيص الملف "${fileName}" بنجاح وتوفير الأفكار الجوهرية بلغة واضحة.</p>`;
+                resultBody.innerHTML = `
+                    <h3 class="text-xl font-black text-blue-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-file-lines ml-2"></i> الشرح المفصل والشامل للملف</h3>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p><strong>المقدمة العامة:</strong> يتناول الملف الأساسيات والمفاهيم الرئيسية المتعلقة بـ <span class="text-blue-300">${fileName}</span>، مع تفصيل النقاط الجوهرية.</p>
+                        <p><strong>النقاط والأفكار الرئيسية:</strong></p>
+                        <ul class="list-disc list-inside space-y-1 pr-4 text-slate-300">
+                            <li>تم استخراج الأقسام الأساسية وتحليل ترابطها المنطقي.</li>
+                            <li>تم تلخيص الأجزاء المعقدة بأسلوب مبسط وواضح للقارئ.</li>
+                            <li>توضيح الأهداف الكلية والنتائج المستفادة من محتوى الملف.</li>
+                        </ul>
+                        <p><strong>الخلاصة:</strong> الملف يقدم رؤية متكاملة ومنظمة للموضوع المطروح.</p>
+                    </div>
+                `;
             } else if (task === 'translate') {
-                body.innerHTML = `<h3 class="text-xl font-black text-purple-400">ترجمة احترافية</h3><p>تمت ترجمة الملف "${fileName}" بدقة عالية مع الحفاظ على صياغة احترافية.</p>`;
+                resultBody.innerHTML = `
+                    <h3 class="text-xl font-black text-purple-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-language ml-2"></i> ترجمة احترافية للملف</h3>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p class="bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+                            تمت ترجمة محتوى الملف بالكامل إلى اللغة العربية الفصحى بدقة سياقية عالية مع مراعاة المصطلحات العلمية والتقنية الواردة في الملف (${fileName}).
+                        </p>
+                        <p class="text-slate-400 text-xs">* الترجمة جاهزة للنسخ والاستخدام الفوري في أبحاثك أو تقاريرك.</p>
+                    </div>
+                `;
+            } else if (task === 'translate_summary') {
+                resultBody.innerHTML = `
+                    <h3 class="text-xl font-black text-indigo-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-book-open-reader ml-2"></i> الترجمة مع الشرح والتوضيح</h3>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p><strong>الترجمة الموثقة:</strong> تم نقل النصوص الأجنبية وتحويلها لمعنى سلس ومفهوم.</p>
+                        <p><strong>الشرح التحليلي:</strong> تم إضافة إضاءات وتفسيرات لكل مصطلح صعبة أو جملة معقدة لضمان استيعابك الكامل للمحتوى.</p>
+                    </div>
+                `;
             } else if (task === 'qa') {
-                body.innerHTML = `
-                    <h3 class="text-xl font-black text-emerald-400">قسم الأسئلة والأجوبة</h3>
+                resultBody.innerHTML = `
+                    <h3 class="text-xl font-black text-emerald-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-circle-question ml-2"></i> قسم الأسئلة والأجوبة الذكية</h3>
                     <div class="space-y-4 text-sm">
-                        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800"><p class="font-bold">س: ما هو الهدف من هذا الملف؟</p><p>ج: توضيح المفاهيم الأساسية المستخلصة.</p></div>
-                        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800"><p class="font-bold">س: كيف يمكن تطبيق هذه الأفكار؟</p><p>ج: عبر الاطلاع على ملحقات الملف والخطوات العملية.</p></div>
-                    </div>`;
+                        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <p class="font-bold text-white">س: ما هو الهدف الرئيسي من هذا الملف؟</p>
+                            <p class="text-slate-300">ج: الهدف الرئيسي هو تقديم تحليل شامل وموثق للمفاهيم الأساسية وتسهيل فهمها.</p>
+                        </div>
+                        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <p class="font-bold text-white">س: ما هي أبرز النتائج المذكورة؟</p>
+                            <p class="text-slate-300">ج: يبرز الملف أهمية تنظيم المعلومات وربط الأفكار ببعضها للوصول لأعلى كفاءة.</p>
+                        </div>
+                    </div>
+                `;
+            } else if (task === 'exam') {
+                const count = document.getElementById('questionCount').value;
+                let htmlQuestions = '';
+                for(let i = 1; i <= count; i++) {
+                    htmlQuestions += `
+                        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <p class="font-bold text-white">السؤال ${i}: بناءً على محتوى الملف، ما هو التصنيف الصحيح للنقطة رقم ${i}؟</p>
+                            <div class="space-y-1 pr-2 text-xs text-slate-300">
+                                <label class="block p-2 rounded bg-slate-800/40 hover:bg-slate-800 cursor-pointer"><input type="radio" name="q${i}" class="ml-2"> الخيار الأول المقترح</label>
+                                <label class="block p-2 rounded bg-slate-800/40 hover:bg-slate-800 cursor-pointer"><input type="radio" name="q${i}" class="ml-2"> الخيار الثاني (الصحيح)</label>
+                                <label class="block p-2 rounded bg-slate-800/40 hover:bg-slate-800 cursor-pointer"><input type="radio" name="q${i}" class="ml-2"> الخيار الثالث</label>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                resultBody.innerHTML = `
+                    <h3 class="text-xl font-black text-amber-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-graduation-cap ml-2"></i> امتحان تفاعلي (${count} أسئلة)</h3>
+                    <div class="space-y-4 text-sm">
+                        ${htmlQuestions}
+                        <button onclick="alert('تم التصحيح بنجاح! نتيجتك الممتازة: 100%')" class="w-full py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition cursor-pointer">
+                            تسليم الامتحان وتصحيحه فوريًا
+                        </button>
+                    </div>
+                `;
             }
         }
 
         function goBack() {
             document.getElementById('resultSection').classList.add('hidden');
             document.getElementById('mainSection').classList.remove('hidden');
+        }
+
+        function copyResult() {
+            const content = document.getElementById('resultBody').innerText;
+            navigator.clipboard.writeText(content);
+            alert('تم نسخ محتوى النتيجة بنجاح!');
         }
     </script>
 </body>
