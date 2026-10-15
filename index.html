@@ -78,17 +78,17 @@
     }
     .glow-bg {
       position: absolute;
-      width: 400px;
-      height: 400px;
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
-      filter: blur(100px);
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+      filter: blur(120px);
       border-radius: 50%;
       z-index: -1;
-      animation: floatGlow 10s ease-in-out infinite alternate;
+      animation: floatGlow 12s ease-in-out infinite alternate;
     }
     @keyframes floatGlow {
-      0% { transform: translateY(0px) scale(1); }
-      100% { transform: translateY(30px) scale(1.1); }
+      0% { transform: translateY(0px) scale(1) translateX(0); }
+      100% { transform: translateY(40px) scale(1.15) translateX(30px); }
     }
     .custom-glass {
       background: rgba(19, 28, 46, 0.75);
@@ -99,7 +99,7 @@
 </head>
 <body class="min-h-screen relative flex flex-col justify-between selection:bg-blue-500 selection:text-white">
   <div class="glow-bg top-10 left-10"></div>
-  <div class="glow-bg bottom-10 right-10" style="animation-delay: 5s;"></div>
+  <div class="glow-bg bottom-10 right-10" style="animation-delay: 6s;"></div>
   
   <header class="w-full px-6 py-4 flex justify-between items-center custom-glass border-b border-cardBorder sticky top-0 z-50">
     <div class="flex items-center space-x-3 space-x-reverse">
@@ -126,19 +126,29 @@
       </div>
 
       <div class="custom-glass rounded-3xl p-6 md:p-8 shadow-2xl space-y-8 border border-slate-800">
-        <div class="space-y-2">
-          <label class="block text-sm font-bold text-slate-300">1. ارفع الملف الخاص بك (PDF, Word, TXT)</label>
-          <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 bg-slate-900/40 hover:bg-slate-900/70 group">
+        <div class="space-y-4">
+          <label class="block text-sm font-bold text-slate-300">1. ارفع الملف الخاص بك أو ألصق النص مباشرة</label>
+          <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-2xl p-6 text-center cursor-pointer transition-all duration-300 bg-slate-900/40 hover:bg-slate-900/70 group">
             <input type="file" id="fileInput" class="hidden" onchange="handleFileSelect(event)">
             <div class="flex flex-col items-center space-y-3 pointer-events-none">
-              <div class="w-16 h-16 rounded-full bg-blue-600/10 text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+              <div class="w-14 h-14 rounded-full bg-blue-600/10 text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
               </div>
               <div>
                 <p class="text-slate-200 font-bold" id="fileNameDisplay">اسحب الملف هنا أو اضغط للاختيار</p>
-                <p class="text-xs text-slate-500 mt-1">يدعم ملفات PDF، DOCX، TXT حتى 50MB</p>
+                <p class="text-xs text-slate-500 mt-1">يدعم ملفات PDF، DOCX، TXT</p>
               </div>
             </div>
+          </div>
+
+          <div class="relative flex items-center py-1">
+            <div class="flex-grow border-t border-slate-700"></div>
+            <span class="flex-shrink mx-4 text-slate-500 text-xs font-bold">أو ألصق النص هنا</span>
+            <div class="flex-grow border-t border-slate-700"></div>
+          </div>
+
+          <div>
+            <textarea id="manualTextInput" placeholder="قم بلصق النص المراد معالجته هنا مباشرة (سيتم معالجة النص كاملاً دون ترك أي كلمة)..." class="w-full h-36 bg-slate-900/60 border border-slate-700 focus:border-blue-500 p-4 rounded-xl text-sm focus:outline-none text-white transition-all resize-y" oninput="handleManualText(this.value)"></textarea>
           </div>
         </div>
 
@@ -266,8 +276,16 @@
         const reader = new FileReader();
         reader.onload = function(e) {
           fileTextContent = e.target.result;
+          document.getElementById('manualTextInput').value = fileTextContent;
         };
         reader.readAsText(file);
+      }
+    }
+
+    function handleManualText(text) {
+      fileTextContent = text;
+      if (!uploadedFileObject) {
+        uploadedFileObject = { name: "النص الملصق يدوياً" };
       }
     }
 
@@ -309,8 +327,14 @@
     }
 
     async function processFile() {
-      if (!fileInput.files.length) {
-        alert('الرجاء اختيار أو سحب ملف أولاً!');
+      // قراءة النص مباشرة من الخانة اليدوية لضمان شموله بالكامل
+      const manualText = document.getElementById('manualTextInput').value.trim();
+      if (manualText) {
+        fileTextContent = manualText;
+      }
+
+      if (!fileTextContent) {
+        alert('الرجاء اختيار ملف أو لصق النص في المربع أولاً!');
         return;
       }
       if (!currentSelectedTask) {
@@ -322,37 +346,41 @@
       resultSection.classList.remove('hidden');
       const resultTitle = document.getElementById('resultTitle');
       const resultBody = document.getElementById('resultBody');
-      resultTitle.innerText = "جاري تحليل الملف...";
+      resultTitle.innerText = "جاري تحليل النص بالكامل...";
       resultBody.innerHTML = `
         <div class="flex flex-col items-center justify-center py-12 space-y-4">
           <i class="fa-solid fa-spinner fa-spin text-4xl text-blue-400"></i>
-          <p class="text-slate-400 text-sm">جاري قراءة محتوى الملف وتطبيق مهمة (${getTaskName(currentSelectedTask)})...</p>
+          <p class="text-slate-400 text-sm">جاري مراجعة ومعالجة النص بالكامل دون ترك أي كلمة وتطبيق مهمة (${getTaskName(currentSelectedTask)})...</p>
         </div>
       `;
-      let promptInstruction = `قم بمعالجة الملف المسمى ${uploadedFileObject.name} والمحتوى التالي: ${fileTextContent.substring(0, 2000)}`;
+      
+      // إرسال النص بالكامل دون أي اقتصاص أو اقتطاع
+      let sourceName = uploadedFileObject ? uploadedFileObject.name : "النص المدخل";
+      let promptInstruction = `قم بمعالجة النص بالكامل والمحتوى التالي بدقة متناهية دون ترك أي كلمة:\n\n${fileTextContent}`;
+      
       if (currentSelectedTask === 'summary') {
         promptInstruction += " قم بعمل تلخيص شامل واحترافي له.";
       } else if (currentSelectedTask === 'translate') {
-        promptInstruction += " قم بترجمة محتوى هذا الملف بدقة كاملة إلى اللغة العربية.";
+        promptInstruction += " قم بترجمة محتوى هذا النص بدقة كاملة إلى اللغة العربية.";
       } else if (currentSelectedTask === 'written_explain') {
         promptInstruction += " قدم شرحاً كتابياً مفصلاً وواضحاً لهذا المحتوى.";
       } else if (currentSelectedTask === 'questions_only') {
         promptInstruction += " استخرج أهم الأسئلة الهامة بناءً على هذا المحتوى.";
       } else if (currentSelectedTask === 'exam') {
         const count = document.getElementById('questionCount').value;
-        promptInstruction += ` أنشئ امتحان تفاعلي مكون من ${count} أسئلة اختيار من متعدد مع الإجابات الصحيحة.`;
+        promptInstruction += ` أنشئ امتحان تفاعلي مكون من ${count} أسئلة اختيار من متعدد مع الإجابات الصحيحة بناءً على كل النص.`;
       }
       const apiResponse = await callGeminiAPI(promptInstruction);
       setTimeout(() => {
-        renderTaskResult(currentSelectedTask, uploadedFileObject.name, apiResponse);
+        renderTaskResult(currentSelectedTask, sourceName, apiResponse);
       }, 1000);
     }
 
     function getTaskName(task) {
       switch(task) {
-        case 'summary': return 'التلخيص الشامل للملف';
-        case 'translate': return 'ترجمة الملف';
-        case 'written_explain': return 'الشرح الكتابي للملف';
+        case 'summary': return 'التلخيص الشامل';
+        case 'translate': return 'ترجمة النص';
+        case 'written_explain': return 'الشرح الكتابي';
         case 'questions_only': return 'أسئلة فقط بدون امتحان';
         case 'chat': return 'محادثة وشرح تفاعلي';
         case 'exam': return 'امتحان تفاعلي';
@@ -381,7 +409,7 @@
         `;
       } else if (task === 'translate') {
         resultBody.innerHTML = `
-          <h3 class="text-xl font-black text-purple-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-language ml-2"></i> ترجمة احترافية للملف</h3>
+          <h3 class="text-xl font-black text-purple-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-language ml-2"></i> ترجمة احترافية للنص</h3>
           <div class="space-y-3 text-sm text-slate-300">
             <p class="bg-slate-900/50 p-4 rounded-xl border border-cardBorder">${apiOutput}</p>
           </div>
@@ -403,10 +431,10 @@
       } else if (task === 'chat') {
         resultBody.innerHTML = `
           <h3 class="text-xl font-black text-emerald-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-comments ml-2"></i> محادثة الشرح والتفاعل الشفوي</h3>
-          <p class="text-xs text-slate-400">اطرح أي سؤال حول محتوى الملف وسيقوم النظام بشرحه لك وتوضيحه بالتفصيل:</p>
+          <p class="text-xs text-slate-400">اطرح أي سؤال حول محتوى النص وسيقوم النظام بشرحه لك وتوضیحه بالتفصيل:</p>
           <div id="chatMessages" class="bg-slate-900/60 p-4 rounded-2xl border border-cardBorder h-64 overflow-y-auto space-y-3 text-sm">
             <div class="bg-blue-600/20 text-blue-200 p-3 rounded-xl max-w-[80%] border border-blue-500/30">
-              أهلاً بك يا صلاح! أنا جاهز لمناقشة محتوى ملف <strong>${fileName}</strong> معك. ما هي النقطة أو الجزء الذي تريد أن نشرحه بالتفصيل؟
+              أهلاً بك يا صلاح! أنا جاهز لمناقشة النص معك. ما هي النقطة أو الجزء الذي تريد أن نشرحه بالتفصيل؟
             </div>
           </div>
           <div class="flex space-x-2 space-x-reverse pt-2">
