@@ -73,15 +73,91 @@
         }
     </script>
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #0b0f19; color: #f8fafc; overflow-x: hidden; }
-        .glow-bg { position: absolute; width: 400px; height: 400px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15)); filter: blur(100px); border-radius: 50%; z-index: -1; animation: floatGlow 10s ease-in-out infinite alternate; }
-        @keyframes floatGlow { 0% { transform: translateY(0px) scale(1); } 100% { transform: translateY(30px) scale(1.1); } }
-        .custom-glass { background: rgba(19, 28, 46, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background-color: #0b0f19; 
+            color: #f8fafc; 
+            overflow-x: hidden; 
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #0b0f19;
+            overflow: hidden;
+        }
+
+        .animated-bg::before, .animated-bg::after {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.08));
+            border-radius: 50%;
+            filter: blur(100px);
+            animation: floatGlow 15s ease-in-out infinite alternate;
+        }
+
+        .animated-bg::after {
+            background: linear-gradient(225deg, rgba(59, 130, 246, 0.05), rgba(236, 72, 153, 0.08));
+            animation-duration: 20s;
+            animation-delay: -5s;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(-20%, -20%) scale(1); }
+            100% { transform: translate(20%, 20%) scale(1.1); }
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: moveParticle linear infinite;
+        }
+
+        @keyframes moveParticle {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        }
+
+        .custom-glass { 
+            background: rgba(19, 28, 46, 0.75); 
+            backdrop-filter: blur(16px); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+        }
     </style>
 </head>
 <body class="min-h-screen relative flex flex-col justify-between selection:bg-blue-500 selection:text-white">
-    <div class="glow-bg top-10 left-10"></div>
-    <div class="glow-bg bottom-10 right-10" style="animation-delay: 5s;"></div>
+    <div class="animated-bg">
+        <div class="particles">
+            <script>
+                for(let i=0; i<15; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'particle';
+                    p.style.width = Math.random() * 5 + 2 + 'px';
+                    p.style.height = p.style.width;
+                    p.style.left = Math.random() * 100 + '%';
+                    p.style.top = Math.random() * 100 + '%';
+                    p.style.animationDuration = Math.random() * 10 + 5 + 's';
+                    p.style.animationDelay = Math.random() * 5 + 's';
+                    document.querySelector('.particles').appendChild(p);
+                }
+            </script>
+        </div>
+    </div>
 
     <header class="w-full px-6 py-4 flex justify-between items-center custom-glass border-b border-cardBorder sticky top-0 z-50">
         <div class="flex items-center space-x-3 space-x-reverse">
@@ -108,13 +184,14 @@
             </div>
 
             <div class="custom-glass rounded-3xl p-6 md:p-8 shadow-2xl space-y-8 border border-slate-800">
-                <div class="space-y-2">
-                    <label class="block text-sm font-bold text-slate-300">1. ارفع الملف الخاص بك (PDF, Word, TXT)</label>
-                    <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 bg-slate-900/40 hover:bg-slate-900/70 group">
+                <div class="space-y-4">
+                    <label class="block text-sm font-bold text-slate-300">1. ارفع الملف الخاص بك أو اكتب النص مباشرة</label>
+                    
+                    <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-2xl p-6 text-center cursor-pointer transition-all duration-300 bg-slate-900/40 hover:bg-slate-900/70 group">
                         <input type="file" id="fileInput" class="hidden" accept=".pdf,.txt,.docx" onchange="handleFileSelect(event)">
                         <div class="flex flex-col items-center space-y-3 pointer-events-none">
-                            <div class="w-16 h-16 rounded-full bg-blue-600/10 text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                                <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+                            <div class="w-12 h-12 rounded-full bg-blue-600/10 text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
                             </div>
                             <div>
                                 <p class="text-slate-200 font-bold" id="fileNameDisplay">اسحب الملف هنا أو اضغط للاختيار</p>
@@ -122,9 +199,19 @@
                             </div>
                         </div>
                     </div>
-                    <!-- حقل عرض النص المستخرج داخل المربع المختار -->
+
+                    <div class="relative flex items-center py-2">
+                        <div class="flex-grow border-t border-slate-700"></div>
+                        <span class="flex-shrink mx-4 text-slate-500 text-sm font-bold">أو</span>
+                        <div class="flex-grow border-t border-slate-700"></div>
+                    </div>
+
+                    <div>
+                        <textarea id="manualTextInput" placeholder="أو يمكنك كتابة أو لصق النص هنا مباشرة..." class="w-full h-32 bg-slate-900/60 border border-slate-700 focus:border-blue-500 p-4 rounded-xl text-sm focus:outline-none text-white transition-all resize-y" oninput="handleManualText(this.value)"></textarea>
+                    </div>
+
                     <div id="fileContentPreviewContainer" class="hidden mt-4 bg-slate-900/80 p-4 rounded-xl border border-slate-700 max-h-48 overflow-y-auto text-right">
-                        <p class="text-xs text-blue-400 font-bold mb-1">معاينة النص المستخرج من الملف:</p>
+                        <p class="text-xs text-blue-400 font-bold mb-1">المحتوى المعالج:</p>
                         <p id="fileContentPreviewText" class="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed"></p>
                     </div>
                 </div>
@@ -136,37 +223,19 @@
                             <span class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors">
                                 <i class="fa-solid fa-file-lines"></i>
                             </span>
-                            <span class="text-sm font-semibold text-slate-200">تلخيص شامل للملف</span>
+                            <span class="text-sm font-semibold text-slate-200">تلخيص شامل</span>
                         </button>
                         <button type="button" onclick="selectTask('translate')" class="task-btn p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-right transition-all duration-200 flex items-center space-x-3 space-x-reverse group cursor-pointer" data-task="translate">
                             <span class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-colors">
                                 <i class="fa-solid fa-language"></i>
                             </span>
-                            <span class="text-sm font-semibold text-slate-200">ترجمة الملف</span>
+                            <span class="text-sm font-semibold text-slate-200">ترجمة النص</span>
                         </button>
                         <button type="button" onclick="selectTask('written_explain')" class="task-btn p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-right transition-all duration-200 flex items-center space-x-3 space-x-reverse group cursor-pointer" data-task="written_explain">
                             <span class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
                                 <i class="fa-solid fa-book-open"></i>
                             </span>
                             <span class="text-sm font-semibold text-slate-200">شرح كتابي</span>
-                        </button>
-                        <button type="button" onclick="selectTask('questions_only')" class="task-btn p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-right transition-all duration-200 flex items-center space-x-3 space-x-reverse group cursor-pointer" data-task="questions_only">
-                            <span class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                                <i class="fa-solid fa-circle-question"></i>
-                            </span>
-                            <span class="text-sm font-semibold text-slate-200">أسئلة فقط بدون امتحان</span>
-                        </button>
-                        <button type="button" onclick="selectTask('chat')" class="task-btn p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-right transition-all duration-200 flex items-center space-x-3 space-x-reverse group cursor-pointer" data-task="chat">
-                            <span class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                                <i class="fa-solid fa-comments"></i>
-                            </span>
-                            <span class="text-sm font-semibold text-slate-200">محادثة وشرح تفاعلي (اسألني)</span>
-                        </button>
-                        <button type="button" onclick="selectTask('exam')" class="task-btn p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-right transition-all duration-200 flex items-center space-x-3 space-x-reverse group sm:col-span-2 md:col-span-1 cursor-pointer" data-task="exam">
-                            <span class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center group-hover:bg-rose-500 group-hover:text-white transition-colors">
-                                <i class="fa-solid fa-graduation-cap"></i>
-                            </span>
-                            <span class="text-sm font-semibold text-slate-200">امتحان تفاعلي (اختيار عدد الأسئلة)</span>
                         </button>
                     </div>
                 </div>
@@ -175,27 +244,16 @@
                     <label class="block text-sm font-bold text-slate-300">اختر لغة التلخيص الشامل:</label>
                     <div class="flex items-center space-x-6 space-x-reverse">
                         <label class="flex items-center space-x-2 space-x-reverse text-slate-300 cursor-pointer">
-                            <input type="radio" name="summaryLang" value="ar" checked class="accent-blue-500">
-                            <span>ملخص بالعربية</span>
+                            <input type="radio" name="summaryLang" value="ar" checked class="accent-blue-500"> <span>ملخص بالعربية</span>
                         </label>
                         <label class="flex items-center space-x-2 space-x-reverse text-slate-300 cursor-pointer">
-                            <input type="radio" name="summaryLang" value="en" class="accent-blue-500">
-                            <span>ملخص بالإنجليزية (English Summary)</span>
+                            <input type="radio" name="summaryLang" value="en" class="accent-blue-500"> <span>ملخص بالإنجليزية</span>
                         </label>
-                    </div>
-                </div>
-
-                <div id="examSettings" class="hidden space-y-2 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                    <label class="block text-sm font-bold text-slate-300">حدد عدد أسئلة الامتحان:</label>
-                    <div class="flex items-center space-x-4 space-x-reverse">
-                        <input type="range" id="questionCount" min="3" max="20" value="5" class="w-full accent-blue-500 cursor-pointer" oninput="document.getElementById('countVal').innerText = this.value">
-                        <span id="countVal" class="bg-blue-600/20 text-blue-400 font-bold px-3 py-1 rounded-lg border border-blue-500/30 text-sm">5</span>
                     </div>
                 </div>
 
                 <button onclick="processFile()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-bold text-lg shadow-lg shadow-blue-600/25 hover:shadow-purple-600/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 cursor-pointer flex items-center justify-center space-x-2 space-x-reverse">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    <span>بدء المعالجة الذكية</span>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span>بدء المعالجة الذكية</span>
                 </button>
             </div>
         </div>
@@ -203,8 +261,7 @@
         <div id="resultSection" class="hidden space-y-6">
             <div class="flex justify-between items-center custom-glass px-6 py-4 rounded-2xl border border-slate-800">
                 <button onclick="goBack()" class="flex items-center space-x-2 space-x-reverse bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl transition cursor-pointer text-sm font-bold">
-                    <i class="fa-solid fa-arrow-right"></i>
-                    <span>رجوع للرئيسية</span>
+                    <i class="fa-solid fa-arrow-right"></i> <span>رجوع للرئيسية</span>
                 </button>
                 <h2 id="resultTitle" class="text-lg font-bold text-blue-400">نتيجة التحليل</h2>
                 <button onclick="copyResult()" class="text-xs bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 px-3 py-2 rounded-xl transition cursor-pointer">
@@ -249,6 +306,20 @@
             }
         });
 
+        function handleManualText(text) {
+            fileTextContent = text;
+            uploadedFileObject = { name: "النص المكتوب يدوياً" };
+            const previewContainer = document.getElementById('fileContentPreviewContainer');
+            const previewText = document.getElementById('fileContentPreviewText');
+            
+            if (text.trim() !== "") {
+                previewText.innerText = text.substring(0, 1000) + (text.length > 1000 ? "\n...(تم إظهار جزء من النص)..." : "");
+                previewContainer.classList.remove('hidden');
+            } else {
+                previewContainer.classList.add('hidden');
+            }
+        }
+
         async function handleFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
@@ -278,7 +349,6 @@
                     } catch (error) {
                         console.error("خطأ في قراءة ملف الـ PDF:", error);
                         previewText.innerText = "حدث خطأ أثناء قراءة ملف الـ PDF، تأكد من أن الملف سليم.";
-                        alert("حدث خطأ أثناء قراءة ملف الـ PDF، تأكد من أن الملف سليم.");
                     }
                 } else {
                     const reader = new FileReader();
@@ -289,22 +359,6 @@
                     reader.readAsText(file);
                 }
             }
-        }
-
-        function selectTask(taskType) {
-            currentSelectedTask = taskType;
-            const buttons = document.querySelectorAll('.task-btn');
-            buttons.forEach(btn => {
-                btn.classList.remove('border-blue-500', 'bg-blue-600/10', 'shadow-lg');
-                btn.classList.add('border-slate-800', 'bg-slate-900/60');
-            });
-            const selectedBtn = document.querySelector(`[data-task="${taskType}"]`);
-            if(selectedBtn) {
-                selectedBtn.classList.remove('border-slate-800', 'bg-slate-900/60');
-                selectedBtn.classList.add('border-blue-500', 'bg-blue-600/10', 'shadow-lg');
-            }
-            document.getElementById('summaryOptions').classList.toggle('hidden', taskType !== 'summary');
-            document.getElementById('examSettings').classList.toggle('hidden', taskType !== 'exam');
         }
 
         async function callGeminiAPI(promptText) {
@@ -322,9 +376,24 @@
             }
         }
 
+        function selectTask(taskType) {
+            currentSelectedTask = taskType;
+            const buttons = document.querySelectorAll('.task-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('border-blue-500', 'bg-blue-600/10', 'shadow-lg');
+                btn.classList.add('border-slate-800', 'bg-slate-900/60');
+            });
+            const selectedBtn = document.querySelector(`[data-task="${taskType}"]`);
+            if (selectedBtn) {
+                selectedBtn.classList.remove('border-slate-800', 'bg-slate-900/60');
+                selectedBtn.classList.add('border-blue-500', 'bg-blue-600/10', 'shadow-lg');
+            }
+            document.getElementById('summaryOptions').classList.toggle('hidden', taskType !== 'summary');
+        }
+
         async function processFile() {
-            if (!fileInput.files.length) {
-                alert('الرجاء اختيار أو سحب ملف أولاً!');
+            if (!fileTextContent.trim()) {
+                alert('الرجاء اختيار ملف أو كتابة نص أولاً!');
                 return;
             }
             if (!currentSelectedTask) {
@@ -339,41 +408,35 @@
             const resultTitle = document.getElementById('resultTitle');
             const resultBody = document.getElementById('resultBody');
 
-            resultTitle.innerText = "جاري تحليل الملف...";
+            resultTitle.innerText = "جاري التحليل...";
             resultBody.innerHTML = `
                 <div class="flex flex-col items-center justify-center py-12 space-y-4">
                     <i class="fa-solid fa-spinner fa-spin text-4xl text-blue-400"></i>
-                    <p class="text-slate-400 text-sm">جاري قراءة محتوى الملف وتطبيق مهمة (${getTaskName(currentSelectedTask)})...</p>
+                    <p class="text-slate-400 text-sm">جاري معالجة النص وتطبيق مهمة (${getTaskName(currentSelectedTask)})...</p>
                 </div>
             `;
 
-            let promptInstruction = `قم بمعالجة الملف المسمى ${uploadedFileObject.name} والمحتوى التالي: ${fileTextContent.substring(0, 15000)}`;
+            let promptInstruction = `قم بمعالجة النص التالي:\n\n${fileTextContent.substring(0, 15000)}`;
 
             if (currentSelectedTask === 'summary') {
-                promptInstruction += " قم بعمل تلخيص شامل واحترافي له.";
+                const lang = document.querySelector('input[name="summaryLang"]:checked').value;
+                const langText = lang === 'en' ? 'الإنجليزية' : 'العربية';
+                promptInstruction += ` قم بعمل تلخيص شامل واحترافي له باللغة ${langText}.`;
             } else if (currentSelectedTask === 'translate') {
-                promptInstruction += " قم بترجمة محتوى هذا الملف بدقة كاملة إلى اللغة العربية.";
+                promptInstruction += " قم بترجمة هذا النص بدقة كاملة إلى اللغة العربية.";
             } else if (currentSelectedTask === 'written_explain') {
-                promptInstruction += " قدم شرحاً كتابياً مفصلاً وواضحاً لهذا المحتوى.";
-            } else if (currentSelectedTask === 'questions_only') {
-                promptInstruction += " استخرج أهم الأسئلة الهامة بناءً على هذا المحتوى.";
-            } else if (currentSelectedTask === 'exam') {
-                const count = document.getElementById('questionCount').value;
-                promptInstruction += ` أنشئ امتحان تفاعلي مكون من ${count} أسئلة اختيار من متعدد مع الإجابات الصحيحة.`;
+                promptInstruction += " قدم شرحاً كتابياً مفصلاً وواضحاً لهذا النص.";
             }
 
             const apiResponse = await callGeminiAPI(promptInstruction);
-            renderTaskResult(currentSelectedTask, uploadedFileObject.name, apiResponse);
+            renderTaskResult(currentSelectedTask, uploadedFileObject ? uploadedFileObject.name : "النص المدخل", apiResponse);
         }
 
         function getTaskName(task) {
             switch(task) {
-                case 'summary': return 'التلخيص الشامل للملف';
-                case 'translate': return 'ترجمة الملف';
-                case 'written_explain': return 'الشرح الكتابي للملف';
-                case 'questions_only': return 'أسئلة فقط بدون امتحان';
-                case 'chat': return 'محادثة وشرح تفاعلي';
-                case 'exam': return 'امتحان تفاعلي';
+                case 'summary': return 'التلخيص الشامل';
+                case 'translate': return 'ترجمة النص';
+                case 'written_explain': return 'الشرح الكتابي';
                 default: return 'معالجة';
             }
         }
@@ -386,82 +449,14 @@
 
             const resultTitle = document.getElementById('resultTitle');
             const resultBody = document.getElementById('resultBody');
-            resultTitle.innerText = `نتيجة: ${getTaskName(task)} (${fileName})`;
+            resultTitle.innerText = `نتيجة: ${getTaskName(task)}`;
 
-            if (task === 'summary') {
-                const lang = document.querySelector('input[name="summaryLang"]:checked').value;
-                const langText = lang === 'en' ? 'إنجليزية' : 'عربية';
+            if (task === 'summary' || task === 'translate' || task === 'written_explain') {
                 resultBody.innerHTML = `
-                    <h3 class="text-xl font-black text-blue-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-file-lines ml-2"></i> التلخيص الشامل (باللغة ${langText})</h3>
+                    <h3 class="text-xl font-black text-blue-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-file-lines ml-2"></i> ${getTaskName(task)}</h3>
                     <div class="space-y-3 text-sm text-slate-300 leading-loose">${apiOutput.replace(/\n/g, '<br>')}</div>
-                `;
-            } else if (task === 'translate') {
-                resultBody.innerHTML = `
-                    <h3 class="text-xl font-black text-purple-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-language ml-2"></i> ترجمة احترافية للملف</h3>
-                    <div class="space-y-3 text-sm text-slate-300 bg-slate-900/50 p-4 rounded-xl border border-cardBorder leading-loose">${apiOutput.replace(/\n/g, '<br>')}</div>
-                `;
-            } else if (task === 'written_explain') {
-                resultBody.innerHTML = `
-                    <h3 class="text-xl font-black text-amber-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-book-open ml-2"></i> الشرح الكتابي المفصل</h3>
-                    <div class="space-y-3 text-sm text-slate-300 leading-loose">${apiOutput.replace(/\n/g, '<br>')}</div>
-                `;
-            } else if (task === 'questions_only') {
-                resultBody.innerHTML = `
-                    <h3 class="text-xl font-black text-indigo-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-circle-question ml-2"></i> مجموعة الأسئلة الهامة</h3>
-                    <div class="space-y-3 text-sm text-slate-300 leading-loose">${apiOutput.replace(/\n/g, '<br>')}</div>
-                `;
-            } else if (task === 'chat') {
-                resultBody.innerHTML = `
-                    <h3 class="text-xl font-black text-emerald-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-comments ml-2"></i> محادثة الشرح والتفاعل الشفوي</h3>
-                    <p class="text-xs text-slate-400">اطرح أي سؤال حول محتوى الملف وسيقوم النظام بشرحه لك وتوضيحه بالتفصيل:</p>
-                    <div id="chatMessages" class="bg-slate-900/60 p-4 rounded-2xl border border-cardBorder h-64 overflow-y-auto space-y-3 text-sm">
-                        <div class="bg-blue-600/20 text-blue-200 p-3 rounded-xl max-w-[80%] border border-blue-500/30">
-                            أهلاً بك يا صلاح! أنا جاهز لمناقشة محتوى ملف <strong>${fileName}</strong> معك. ما هي النقطة أو الجزء الذي تريد أن نشرحه بالتفصيل؟
-                        </div>
-                    </div>
-                    <div class="flex space-x-2 space-x-reverse pt-2">
-                        <input type="text" id="userQuestionInput" placeholder="اكتب سؤالك هنا (مثال: اشرح لي الجزء الأول...)" class="flex-grow bg-slate-900 border border-slate-700 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-blue-500 text-white" onkeypress="if(event.key === 'Enter') sendChatMessage()">
-                        <button onclick="sendChatMessage()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-3 rounded-xl text-white font-bold transition cursor-pointer">
-                            <i class="fa-solid fa-paper-plane"></i> ارسال
-                        </button>
-                    </div>
-                `;
-            } else if (task === 'exam') {
-                resultBody.innerHTML = `
-                    <h3 class="text-xl font-black text-rose-400 border-b border-cardBorder pb-3"><i class="fa-solid fa-graduation-cap ml-2"></i> امتحان تفاعلي</h3>
-                    <div class="space-y-4 text-sm leading-loose">${apiOutput.replace(/\n/g, '<br>')}</div>
                 `;
             }
-        }
-
-        async function sendChatMessage() {
-            const input = document.getElementById('userQuestionInput');
-            const chatMessages = document.getElementById('chatMessages');
-            const questionText = input.value.trim();
-            if (!questionText) return;
-
-            chatMessages.innerHTML += `
-                <div class="bg-slate-800 text-slate-100 p-3 rounded-xl max-w-[80%] mr-auto border border-slate-700">
-                    ${questionText}
-                </div>
-            `;
-            input.value = '';
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            const responseData = await callGeminiAPI(questionText);
-            let botReply = "تعذر الحصول على رد من الذكاء الاصطناعي.";
-            if (responseData && responseData.candidates && responseData.candidates[0] && responseData.candidates[0].content && responseData.candidates[0].content.parts && responseData.candidates[0].content.parts[0].text) {
-                botReply = responseData.candidates[0].content.parts[0].text;
-            }
-
-            setTimeout(() => {
-                chatMessages.innerHTML += `
-                    <div class="bg-blue-600/20 text-blue-200 p-3 rounded-xl max-w-[80%] border border-blue-500/30">
-                        ${botReply}
-                    </div>
-                `;
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 500);
         }
 
         function goBack() {
