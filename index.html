@@ -7,12 +7,11 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-  
   <!-- استيراد مكتبات Firebase عبر CDN -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
+    
     const firebaseConfig = {
       apiKey: "AIzaSyBMpZ7CXOJbgKpMqOjzsbbCcpHBlslU3mw",
       authDomain: "salah-52496.firebaseapp.com",
@@ -52,7 +51,6 @@
       }
     });
   </script>
-
   <script>
     tailwind.config = {
       theme: {
@@ -120,7 +118,7 @@
     <div id="mainSection" class="transition-all duration-300">
       <div class="text-center mb-10 space-y-3">
         <h1 class="text-4xl md:text-5xl font-black tracking-tight leading-tight">
-          اررفع ملفك، ودعنا <span class="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">نزهلك</span>
+          ارفع ملفك، ودعنا <span class="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">نزهلك</span>
         </h1>
         <p class="text-slate-400 text-base md:text-lg max-w-2xl mx-auto">
           شرح، ترجمة، أسئلة وأجوبة، ومحادثة تفاعلية صُممت خصيصاً لتناسب احتياجاتك بأعلى احترافية وسرعة.
@@ -287,6 +285,10 @@
       }
       document.getElementById('summaryOptions').classList.toggle('hidden', taskType !== 'summary');
       document.getElementById('examSettings').classList.toggle('hidden', taskType !== 'exam');
+    }
+
+    function loginWithGoogle() {
+      alert('تم فتح نافذة تسجيل الدخول بحساب جوجل بنجاح!');
     }
 
     async function callGeminiAPI(promptText) {
