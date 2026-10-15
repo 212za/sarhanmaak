@@ -11,7 +11,6 @@
     <!-- استيراد مكتبة PDF.js لقراءة ملفات PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
-        // إعداد مسار الـ worker الخاص بـ PDF.js
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
 
@@ -122,6 +121,11 @@
                                 <p class="text-xs text-slate-500 mt-1">يدعم ملفات PDF، DOCX، TXT حتى 50MB</p>
                             </div>
                         </div>
+                    </div>
+                    <!-- حقل عرض النص المستخرج داخل المربع المختار -->
+                    <div id="fileContentPreviewContainer" class="hidden mt-4 bg-slate-900/80 p-4 rounded-xl border border-slate-700 max-h-48 overflow-y-auto text-right">
+                        <p class="text-xs text-blue-400 font-bold mb-1">معاينة النص المستخرج من الملف:</p>
+                        <p id="fileContentPreviewText" class="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed"></p>
                     </div>
                 </div>
 
@@ -245,13 +249,17 @@
             }
         });
 
-        // دالة قراءة الملفات بما فيها PDF
         async function handleFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
                 uploadedFileObject = file;
                 document.getElementById('fileNameDisplay').innerHTML = `الملف المختار: <span class="text-blue-400 font-bold">${file.name}</span>`;
                 
+                const previewContainer = document.getElementById('fileContentPreviewContainer');
+                const previewText = document.getElementById('fileContentPreviewText');
+                previewText.innerText = "جاري استخراج وقراءة محتوى الملف...";
+                previewContainer.classList.remove('hidden');
+
                 if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
                     try {
                         const arrayBuffer = await file.arrayBuffer();
@@ -266,14 +274,17 @@
                             fullText += pageText + '\n';
                         }
                         fileTextContent = fullText;
+                        previewText.innerText = fullText.substring(0, 1000) + (fullText.length > 1000 ? "\n...(تم إظهار جزء من النص)..." : "");
                     } catch (error) {
                         console.error("خطأ في قراءة ملف الـ PDF:", error);
+                        previewText.innerText = "حدث خطأ أثناء قراءة ملف الـ PDF، تأكد من أن الملف سليم.";
                         alert("حدث خطأ أثناء قراءة ملف الـ PDF، تأكد من أن الملف سليم.");
                     }
                 } else {
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         fileTextContent = e.target.result;
+                        previewText.innerText = fileTextContent.substring(0, 1000) + (fileTextContent.length > 1000 ? "\n...(تم إظهار جزء من النص)..." : "");
                     };
                     reader.readAsText(file);
                 }
